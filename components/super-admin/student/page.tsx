@@ -59,8 +59,8 @@ interface ImportHistory {
 export default function StudentDashboard() {
   const router = useRouter();
   const currentUser = AuthService.getUser();
-  const collegeCode = currentUser?.college_code || "";
-  const collegeName = currentUser?.college_name || "";
+  const collegeCode = currentUser?.college_code || "SVCE1234";
+  const collegeName = currentUser?.college_name || "Sri Venkateswara College of Engineering";
   const approvedDomains = currentUser?.approved_domains || [];
 
   // Tab State
@@ -70,6 +70,10 @@ export default function StudentDashboard() {
   const [students, setStudents] = useState<Student[]>([]);
   const [importHistory, setImportHistory] = useState<ImportHistory[]>([]);
   const [colleges, setColleges] = useState<any[]>([]);
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 15;
 
   const selectedCollege = useMemo(() => {
     return colleges.find(c => String(c.id) === String(collegeCode) || c.code === collegeCode) || colleges[0] || null;
@@ -193,6 +197,11 @@ export default function StudentDashboard() {
       return true;
     });
   }, [students, searchQuery, selectedDept, selectedSection, selectedGradYear, selectedStatus]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredStudents.length / pageSize));
+  const paginatedStudents = useMemo(() => {
+    return filteredStudents.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  }, [filteredStudents, currentPage, pageSize]);
 
   // Analytics Metrics
   const metrics = useMemo(() => {
@@ -843,7 +852,7 @@ export default function StudentDashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border text-xs font-medium">
-                  {filteredStudents.map((stud) => {
+                  {paginatedStudents.map((stud) => {
                     const isChecked = checkedIds.includes(stud.rollNumber);
                     const isDropdownOpen = openDropdownId === stud.rollNumber;
                     return (
@@ -935,6 +944,40 @@ export default function StudentDashboard() {
                 </tbody>
               </table>
             </div>
+
+            {/* Pagination Controls */}
+            {filteredStudents.length > 0 && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-6 py-4 border-t border-border bg-card/60">
+                <div className="text-xs text-muted-foreground font-medium">
+                  Showing <span className="font-bold text-foreground">{(currentPage - 1) * pageSize + 1}</span> to{" "}
+                  <span className="font-bold text-foreground">{Math.min(currentPage * pageSize, filteredStudents.length)}</span> of{" "}
+                  <span className="font-bold text-foreground">{filteredStudents.length}</span> students
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    className="h-8 px-3 rounded-xl text-xs font-semibold"
+                  >
+                    Previous
+                  </Button>
+                  <span className="text-xs font-semibold px-2 text-foreground">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={currentPage >= totalPages}
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    className="h-8 px-3 rounded-xl text-xs font-semibold"
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
 
         </div>

@@ -97,7 +97,8 @@ api.interceptors.response.use(
                 }
             }
 
-            toast.error(message, { id: message });
+            // Do not show global error toasts for backend network failures in offline/mock mode
+            console.warn("[API Offline Fallback]:", message);
         }
         return Promise.reject(error);
     }

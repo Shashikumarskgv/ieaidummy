@@ -352,17 +352,12 @@ const INITIAL_STAFF: Staff[] = [
 ];
 
 export function getStoredStaff(): Staff[] {
-  if (typeof window === "undefined") return INITIAL_STAFF;
-  const stored = localStorage.getItem("dq_staff");
-  if (!stored) {
-    localStorage.setItem("dq_staff", JSON.stringify(INITIAL_STAFF));
-    return INITIAL_STAFF;
-  }
-  return JSON.parse(stored);
+  return mockSuperAdminStore.getStaff() as unknown as Staff[];
 }
 
 export function saveStaff(staff: Staff[]) {
   if (typeof window === "undefined") return;
+  mockSuperAdminStore.saveStaff(staff as any);
   localStorage.setItem("dq_staff", JSON.stringify(staff));
 }
 
@@ -434,18 +429,15 @@ const INITIAL_IMPORT_HISTORY: ImportHistory[] = [
 ];
 
 
+import { mockSuperAdminStore } from "./mockSuperAdminData";
+
 export function getStoredStudents(): Student[] {
-  if (typeof window === "undefined") return [];
-  const stored = localStorage.getItem("dq_students");
-  if (!stored) {
-    localStorage.setItem("dq_students", JSON.stringify([]));
-    return [];
-  }
-  return JSON.parse(stored);
+  return mockSuperAdminStore.getStudents() as unknown as Student[];
 }
 
 export function saveStudents(students: Student[]) {
   if (typeof window === "undefined") return;
+  mockSuperAdminStore.saveStudents(students as any);
   localStorage.setItem("dq_students", JSON.stringify(students));
 }
 

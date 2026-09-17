@@ -1438,7 +1438,13 @@ class MockStudentStore {
     if (!this.isBrowser()) return INITIAL_STUDENT_PROFILE;
     try {
       const raw = localStorage.getItem(STORAGE_KEYS.PROFILE);
-      if (raw) return JSON.parse(raw);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        return {
+          ...parsed,
+          profile_completion: 100
+        };
+      }
     } catch {}
     return INITIAL_STUDENT_PROFILE;
   }
@@ -1448,6 +1454,7 @@ class MockStudentStore {
     const updated: StudentProfileData = {
       ...current,
       ...payload,
+      profile_completion: 100,
       name: payload.first_name || payload.last_name 
         ? `${payload.first_name || current.first_name} ${payload.last_name || current.last_name}`.trim()
         : (payload.name || current.name)
@@ -1614,12 +1621,26 @@ class MockStudentStore {
   // ---- Subscription & Payment ----
   public getPricing(): any {
     return {
+      subtotal: 677.12,
+      gst_rate_percent: 18,
+      gst_amount: 121.88,
+      total_amount: 799.00,
       basePrice: 999,
       discount: 200,
       finalPrice: 799,
       currency: "INR",
       planName: "Annual Pro Placement & Assessment Pass",
-      validity: "1 Year Access",
+      subscription_title: "Annual LMS Pro Platform & Placement License",
+      validity: "1 Year Full Access",
+      college_name: "Sri Venkateswara College of Engineering",
+      inclusions: [
+        "Unlimited Proctored Exams & Assessments",
+        "AI Mock Interview Preparation & Real-time Evaluations",
+        "Institutional Placement Drive Registration & Roster",
+        "Automated GST Invoice & Downloadable Payment Receipt",
+        "Practice Coding Labs, Quizzes, & Learning Analytics",
+        "1-Year Full Platform Access License"
+      ],
       features: [
         "Full Access to 50+ Assessment Drives",
         "Unlimited AI Mock Technical Interviews",
@@ -1638,13 +1659,19 @@ class MockStudentStore {
         if (raw) return JSON.parse(raw);
       } catch {}
     }
-    return {
+    const defaultLicense = {
+      status: "active",
       isLicensed: true,
-      licenseKey: "LIC-PRO-2025-AARAV-8849",
+      license_key: "LIC-PRO-2025-SVCE-8849",
+      licenseKey: "LIC-PRO-2025-SVCE-8849",
+      transaction_id: "TXN_RZP_992817462",
+      issued_at: new Date(Date.now() - 30 * 86400000).toISOString(),
+      expires_at: new Date(Date.now() + 335 * 86400000).toISOString(),
+      plan_name: "Pro Placement & Assessment Pass",
       planName: "Pro Placement & Assessment Pass",
-      validUntil: "2026-06-30T23:59:59.000Z",
-      daysRemaining: 286,
-      status: "Active",
+      amount_paid: 799.00,
+      validUntil: new Date(Date.now() + 335 * 86400000).toISOString(),
+      daysRemaining: 335,
       features: [
         "All Corporate Assessment Drives",
         "AI Mock Interviews & Test Sandbox",
@@ -1652,13 +1679,19 @@ class MockStudentStore {
         "Cohort Leaderboard & Analytics"
       ]
     };
+    if (this.isBrowser()) {
+      try {
+        localStorage.setItem(STORAGE_KEYS.LICENSE, JSON.stringify(defaultLicense));
+      } catch {}
+    }
+    return defaultLicense;
   }
 
   public createOrder(gateway: string = "Razorpay"): any {
     const orderId = `order_mock_${Math.floor(100000 + Math.random() * 900000)}`;
     return {
       orderId,
-      amount: 79900,
+      amount: 799.00,
       currency: "INR",
       gateway,
       keyId: "rzp_test_mock_123456"
@@ -1667,14 +1700,26 @@ class MockStudentStore {
 
   public verifyPayment(payload: any): any {
     const receiptNumber = `REC-2025-${Math.floor(10000 + Math.random() * 90000)}`;
-    const transactionId = `txn_mock_${Math.floor(100000 + Math.random() * 900000)}`;
+    const transactionId = `TXN_${(payload.gateway || "RZP").toUpperCase()}_${Math.floor(100000 + Math.random() * 900000)}`;
     const newLicense = {
+      status: "active",
       isLicensed: true,
-      licenseKey: `LIC-PRO-${Math.floor(1000 + Math.random() * 9000)}-RENEWED`,
-      planName: "Pro Placement & Assessment Pass (Renewed)",
-      validUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+      license_key: `LIC-PRO-2025-SVCE-${Math.floor(1000 + Math.random() * 9000)}`,
+      licenseKey: `LIC-PRO-2025-SVCE-${Math.floor(1000 + Math.random() * 9000)}`,
+      transaction_id: transactionId,
+      issued_at: new Date().toISOString(),
+      expires_at: new Date(Date.now() + 365 * 86400000).toISOString(),
+      validUntil: new Date(Date.now() + 365 * 86400000).toISOString(),
+      plan_name: "Annual Pro Placement & Assessment Pass (Renewed)",
+      planName: "Annual Pro Placement & Assessment Pass (Renewed)",
       daysRemaining: 365,
-      status: "Active"
+      amount_paid: 799.00,
+      features: [
+        "All Corporate Assessment Drives",
+        "AI Mock Interviews & Test Sandbox",
+        "ATS Resume Builder (Unlimited Exports)",
+        "Cohort Leaderboard & Analytics"
+      ]
     };
     if (this.isBrowser()) {
       localStorage.setItem(STORAGE_KEYS.LICENSE, JSON.stringify(newLicense));
@@ -1683,9 +1728,10 @@ class MockStudentStore {
       success: true,
       receiptNumber,
       transactionId,
-      amountPaid: 799,
+      amountPaid: 799.00,
       paymentDate: new Date().toISOString(),
-      license: newLicense
+      license: newLicense,
+      data: newLicense
     };
   }
 

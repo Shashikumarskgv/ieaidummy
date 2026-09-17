@@ -14,7 +14,18 @@ class AuthService {
             // Frontend demo fallback for standalone execution
         }
 
-        const mockHODUser = {
+        const isSuperAdmin = payload?.portal === "super-admin" || payload?.role === "super-admin" || String(payload?.username || "").toLowerCase().includes("admin");
+
+        const mockUser = isSuperAdmin ? {
+            id: 201,
+            role_id: 2,
+            role: "SUPER_ADMIN",
+            full_name: "Dr. K. R. Prasad (Super Admin)",
+            email: payload?.username || "superadmin@svce.edu",
+            college_code: "SVCE1234",
+            college_name: "Sri Venkateswara College of Engineering",
+            department: "College Administration"
+        } : {
             id: 301,
             role_id: 3,
             role: "HOD",
@@ -26,8 +37,8 @@ class AuthService {
         };
 
         const mockData = {
-            access_token: "mock_jwt_token_hod_svce",
-            user: mockHODUser
+            access_token: isSuperAdmin ? "mock_jwt_token_super_admin_svce" : "mock_jwt_token_hod_svce",
+            user: mockUser
         };
 
         StorageService.saveSession(mockData.access_token, mockData.user);

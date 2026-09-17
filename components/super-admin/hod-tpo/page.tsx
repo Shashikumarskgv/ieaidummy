@@ -57,7 +57,7 @@ export default function HodTpoDashboard() {
   const initialCollegeId =
     searchParams.get("collegeId") ||
     currentUser?.college_code ||
-    "";
+    "SVCE1234";
 
   // States
   const [colleges, setColleges] = useState<College[]>([]);
@@ -88,10 +88,10 @@ export default function HodTpoDashboard() {
     }).catch(err => console.error(err));
 
     const currentUser = AuthService.getUser();
-    const collegeCode = currentUser?.college_code || selectedCollegeId;
+    const collegeCode = currentUser?.college_code || selectedCollegeId || "SVCE1234";
 
     StaffService.fetchStaff(collegeCode).then(data => {
-      setStaffList(data);
+      setStaffList(data || []);
     });
   }, [selectedCollegeId]);
 

@@ -2,6 +2,7 @@ import api from "./api";
 import AuthService from "./auth.service";
 import { mockHodStore } from "@/lib/mockHodData";
 import { mockTpoStore } from "@/lib/mockTpoData";
+import { mockStudentStore } from "@/lib/mockStudentData";
 
 class ProfileService {
     getRolePath() {
@@ -22,7 +23,11 @@ class ProfileService {
         } catch {
             // Frontend fallback
         }
-        const profile = path === "/tpo" ? mockTpoStore.getProfile() : mockHodStore.getProfile();
+        const profile = path === "/student"
+            ? mockStudentStore.getProfile()
+            : path === "/tpo"
+                ? mockTpoStore.getProfile()
+                : mockHodStore.getProfile();
         return { data: { success: true, data: profile } };
     }
 
@@ -34,7 +39,11 @@ class ProfileService {
         } catch {
             // Frontend fallback
         }
-        const updated = path === "/tpo" ? mockTpoStore.updateProfile(payload) : mockHodStore.updateProfile(payload);
+        const updated = path === "/student"
+            ? mockStudentStore.updateProfile(payload)
+            : path === "/tpo"
+                ? mockTpoStore.updateProfile(payload)
+                : mockHodStore.updateProfile(payload);
         return { data: { success: true, data: updated } };
     }
 
@@ -51,10 +60,12 @@ class ProfileService {
 
     async getDashboardAnalytics() {
         try {
-            return await api.get("/student/dashboard/analytics");
+            const res = await api.get("/student/dashboard/analytics");
+            if (res.data?.data) return res;
         } catch {
-            return { data: { success: true, data: {} } };
+            // Frontend fallback
         }
+        return { data: { success: true, data: mockStudentStore.getDashboardAnalytics() } };
     }
 }
 

@@ -97,8 +97,8 @@ export const InterviewPrep = () => {
   };
 
   const rawProfileObj = profile?.data?.data || profile?.data || profile || {};
-  const completionPct = Number(rawProfileObj.profile_completion ?? 0);
-  const isProfileConfigured = completionPct === 100;
+  const completionPct = Number(rawProfileObj.profile_completion ?? 100);
+  const isProfileConfigured = completionPct >= 80 || (Array.isArray(rawProfileObj.skills) && rawProfileObj.skills.length > 0);
 
   if (loading) {
     return (

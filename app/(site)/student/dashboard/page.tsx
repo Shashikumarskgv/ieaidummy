@@ -154,6 +154,76 @@ export default function StudentDashboard() {
         })}
       </div>
 
+      {/* --- Batch Cohort Leaderboard & Live Concurrency Banner --- */}
+      <div className="bg-gradient-to-r from-primary/10 via-card to-card border border-primary/20 rounded-2xl p-5 shadow-xs space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border/50 pb-3.5">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0">
+              <Sparkles className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="font-bold text-sm text-foreground">Department Cohort & Live Concurrency Stream</h3>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                  Live Sync
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Benchmark vs <strong className="text-foreground">56 CSE Cohort Students</strong> • Batch Average CGPA: 8.24 • Mean Test Score: 78.4%
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <div className="px-3 py-1.5 rounded-xl bg-card border border-border flex items-center gap-2">
+              <span className="text-muted-foreground text-[11px]">Batch Rank:</span>
+              <span className="font-extrabold text-foreground font-mono text-xs">#2 / 56</span>
+              <span className="text-[10px] font-bold text-emerald-600 bg-emerald-500/10 px-1.5 py-0.5 rounded-md">Top 3.6%</span>
+            </div>
+            <div className="px-3 py-1.5 rounded-xl bg-card border border-border flex items-center gap-2">
+              <span className="text-muted-foreground text-[11px]">Active Peers:</span>
+              <span className="font-extrabold text-blue-600 font-mono text-xs">18 Online</span>
+              <span className="text-[10px] text-muted-foreground">• 12 in Exams</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Top Peers Benchmark Strip */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 pt-1">
+          {[
+            { rank: 1, name: "Aditi Rao", cgpa: "9.88", score: "98%", dept: "CSE", isYou: false },
+            { rank: 2, name: "Aarav Sharma", cgpa: "9.40", score: "96%", dept: "CSE", isYou: true },
+            { rank: 3, name: "Rohan Gupta", cgpa: "9.35", score: "94%", dept: "CSE", isYou: false },
+            { rank: 4, name: "Sneha Patel", cgpa: "9.18", score: "93%", dept: "IT", isYou: false },
+            { rank: 5, name: "Vikram Malhotra", cgpa: "9.05", score: "91%", dept: "ECE", isYou: false }
+          ].map((peer) => (
+            <div
+              key={peer.rank}
+              className={`p-2.5 rounded-xl border text-xs transition-all ${
+                peer.isYou
+                  ? "bg-primary/10 border-primary/40 shadow-xs ring-1 ring-primary/20"
+                  : "bg-card/70 border-border/70 hover:bg-card"
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="font-mono font-bold text-[10px] text-muted-foreground">Rank #{peer.rank}</span>
+                {peer.isYou && (
+                  <span className="text-[9px] font-black px-1.5 py-0.2 rounded bg-primary text-primary-foreground">
+                    YOU
+                  </span>
+                )}
+              </div>
+              <div className="font-bold text-foreground truncate mt-1">{peer.name}</div>
+              <div className="flex items-center justify-between text-[10px] text-muted-foreground font-mono mt-0.5">
+                <span>{peer.cgpa} CGPA</span>
+                <span className="font-bold text-emerald-600">{peer.score}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* --- Interview Preparation Analytics Panel Section (Dynamic) --- */}
       <div className="bg-card border border-border rounded-2xl p-6 shadow-sm space-y-6">
         <div className="flex items-center justify-between border-b border-border/60 pb-4">

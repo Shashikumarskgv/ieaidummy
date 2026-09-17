@@ -310,6 +310,8 @@ const InterviewSectionView = () => {
       if (localOverride === "clear") return null;
       if (localOverride) return localOverride;
 
+      if (p.selectedRole) return p.selectedRole;
+
       const isInitialized = typeof window !== "undefined" ? localStorage.getItem(`dq_panel_role_initialized_${p.panelNumber}`) === "true" : false;
       if (!isInitialized) return null;
 

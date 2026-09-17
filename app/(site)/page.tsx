@@ -166,7 +166,14 @@ export default function Page() {
           </nav>
 
           {/* Nav Actions */}
-          <div className="hidden items-center gap-4 md:flex">
+          <div className="hidden items-center gap-3 md:flex">
+            <Link
+              href="/super-admin/auth"
+              className="text-xs font-bold px-3 py-2 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-[#ff6666] border border-slate-200 hover:border-[#ff6666]/40 transition-all flex items-center gap-1.5 shadow-sm"
+            >
+              <Building2 className="w-3.5 h-3.5 text-[#ff6666]" />
+              <span>Super Admin Demo</span>
+            </Link>
             <a
               href="#portal"
               className="text-sm font-semibold text-slate-700 hover:text-[#ff6666] transition-colors"
@@ -201,6 +208,14 @@ export default function Page() {
               <a href="#placement" onClick={() => setMobileMenuOpen(false)}>Placement</a>
               <a href="#workflow" onClick={() => setMobileMenuOpen(false)}>Workflow</a>
               <a href="#roles" onClick={() => setMobileMenuOpen(false)}>Role Portals</a>
+              <Link
+                href="/super-admin/auth"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2 font-bold text-[#ff6666] py-1"
+              >
+                <Building2 className="h-4 w-4" />
+                <span>Super Admin Portal Demo</span>
+              </Link>
               <hr className="my-2 border-slate-100" />
               <Button
                 onClick={() => { setMobileMenuOpen(false); setDemoModalOpen(true); }}
@@ -247,11 +262,21 @@ export default function Page() {
                   <Sparkles className="mr-2 h-5 w-5" />
                   Book Institutional Demo
                 </Button>
-                <a href="#features">
+                <Link href="/super-admin/auth">
                   <Button
                     variant="outline"
                     size="lg"
-                    className="h-13 rounded-2xl border-slate-300 bg-white font-semibold text-slate-700 hover:bg-slate-50 px-8 text-base shadow-sm"
+                    className="h-13 rounded-2xl border-[#ff6666]/40 bg-white hover:bg-rose-50 text-slate-800 font-bold px-6 text-base shadow-sm transition-all hover:scale-[1.02] flex items-center gap-2"
+                  >
+                    <Building2 className="h-5 w-5 text-[#ff6666]" />
+                    <span>Super Admin Demo</span>
+                  </Button>
+                </Link>
+                <a href="#features">
+                  <Button
+                    variant="ghost"
+                    size="lg"
+                    className="h-13 rounded-2xl text-slate-600 hover:text-slate-900 font-semibold px-6 text-base"
                   >
                     Explore Features
                     <ArrowRight className="ml-2 h-5 w-5 text-slate-400" />
@@ -297,14 +322,23 @@ export default function Page() {
                 <div className="grid gap-3">
                   {roles.map((role) => {
                     const RoleIcon = role.icon;
+                    const isSuperAdmin = role.label === "Superadmin";
                     return (
                       <Link
                         key={role.href}
                         href={role.href}
-                        className="group relative flex items-center justify-between rounded-2xl border border-slate-200/80 bg-slate-50 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-[#ff6666]/40 hover:bg-gradient-to-r hover:from-white hover:to-rose-50/40 hover:shadow-md"
+                        className={`group relative flex items-center justify-between rounded-2xl border p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${
+                          isSuperAdmin
+                            ? "border-[#ff6666]/40 bg-rose-50/20 hover:bg-rose-50/50 hover:border-[#ff6666]"
+                            : "border-slate-200/80 bg-slate-50 hover:border-[#ff6666]/40 hover:bg-gradient-to-r hover:from-white hover:to-rose-50/40"
+                        }`}
                       >
                         <div className="flex items-center gap-4">
-                          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white border border-slate-200 text-[#ff6666] shadow-sm transition-transform group-hover:scale-105 group-hover:bg-[#ff6666] group-hover:text-white group-hover:border-[#ff6666]">
+                          <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border shadow-sm transition-transform group-hover:scale-105 ${
+                            isSuperAdmin
+                              ? "bg-[#ff6666] text-white border-[#ff6666]"
+                              : "bg-white border-slate-200 text-[#ff6666] group-hover:bg-[#ff6666] group-hover:text-white group-hover:border-[#ff6666]"
+                          }`}>
                             <RoleIcon className="h-6 w-6" />
                           </div>
                           <div className="flex flex-col text-left">
@@ -312,8 +346,12 @@ export default function Page() {
                               <span className="text-base font-bold text-slate-900 group-hover:text-[#ff6666]">
                                 {role.label}
                               </span>
-                              <span className="rounded-md bg-slate-200/70 px-2 py-0.5 text-[10px] font-semibold text-slate-600">
-                                {role.badge}
+                              <span className={`rounded-md px-2 py-0.5 text-[10px] font-semibold ${
+                                isSuperAdmin
+                                  ? "bg-rose-100 text-[#ff6666] font-bold"
+                                  : "bg-slate-200/70 text-slate-600"
+                              }`}>
+                                {isSuperAdmin ? "Demo Ready • 1-Click" : role.badge}
                               </span>
                             </div>
                             <span className="text-xs text-slate-500 line-clamp-1">
@@ -622,13 +660,20 @@ export default function Page() {
                         </div>
                       </div>
 
-                      <div className="mt-8">
+                      <div className="mt-8 flex flex-wrap items-center gap-3">
                         <Link href={r.href}>
                           <Button className="rounded-xl bg-[#ff6666] hover:bg-rose-600 text-white font-bold px-6">
                             Go to {r.label} Login Portal
                             <ArrowRight className="ml-2 h-4 w-4" />
                           </Button>
                         </Link>
+                        {r.label === "Superadmin" && (
+                          <Link href="/super-admin/dashboard">
+                            <Button variant="outline" className="rounded-xl border-[#ff6666]/30 text-[#ff6666] hover:bg-rose-50 font-bold px-5">
+                              Launch Super Admin Dashboard Directly →
+                            </Button>
+                          </Link>
+                        )}
                       </div>
                     </div>
 

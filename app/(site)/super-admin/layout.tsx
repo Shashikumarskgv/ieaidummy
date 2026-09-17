@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import AuthService from "@/services/auth.service";
+import StorageService from "@/services/storage.service";
 import {
   GraduationCap,
   LayoutDashboard,
@@ -33,6 +34,31 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    if (pathname.startsWith("/super-admin/auth")) return;
+
+    const user = AuthService.getCurrentUser();
+    const isSuperAdmin =
+      user &&
+      (user.role_id === 2 ||
+        user.role_id === 1 ||
+        String(user.role || "").toUpperCase().includes("SUPER"));
+
+    if (!user || !isSuperAdmin) {
+      const demoUser = {
+        id: 201,
+        role_id: 2,
+        role: "SUPER_ADMIN",
+        full_name: "Dr. K. R. Prasad (Super Admin)",
+        email: "admin@svce.edu",
+        college_code: "SVCE1234",
+        college_name: "Sri Venkateswara College of Engineering",
+        department: "College Administration"
+      };
+      StorageService.saveSession("mock_jwt_token_super_admin_svce", demoUser);
+    }
+  }, [pathname]);
 
   const navItems: NavItem[] = [
     { path: "/super-admin/dashboard", label: "Dashboard", icon: LayoutDashboard, end: true },
